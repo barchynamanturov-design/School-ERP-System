@@ -1,0 +1,148 @@
+.page {
+  min-height: 100vh;
+  background: #f0f2f5;
+}
+
+.header {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  padding: 20px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+}
+
+.headerLeft h1 {
+  color: white;
+  margin: 0;
+  font-size: 22px;
+}
+
+.headerLeft p {
+  margin: 0;
+  opacity: 0.8;
+  font-size: 13px;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.userInfo {
+  text-align: right;
+}
+
+.userName {
+  margin: 0;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.roleBadge {
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  color: white;
+}
+
+.logoutBtn {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.logoutBtn:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+.content {
+  padding: 32px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.welcome {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e1b4b;
+  margin-bottom: 24px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-top: 4px solid #4f46e5;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.cardIcon {
+  font-size: 36px;
+}
+
+.cardTitle {
+  margin: 8px 0 0;
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-size: 16px;
+  color: #888;
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .headerRight {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .content {
+    padding: 16px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .cardIcon {
+    font-size: 28px;
+  }
+}

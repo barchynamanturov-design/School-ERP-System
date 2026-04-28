@@ -1,0 +1,114 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+}
+
+.card {
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  width: 100%;
+  max-width: 420px;
+}
+
+.title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e1b4b;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #888;
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.input {
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s;
+  width: 100%;
+}
+
+.input:focus {
+  border-color: #4f46e5;
+}
+
+.select {
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  width: 100%;
+  background: white;
+  cursor: pointer;
+}
+
+.select:focus {
+  border-color: #4f46e5;
+}
+
+.adminInput {
+  padding: 10px 14px;
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  width: 100%;
+  background: #fffbeb;
+}
+
+.adminInput:focus {
+  border-color: #f59e0b;
+}
+
+.button {
+  padding: 12px;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 4px;
+}
+
+.button:hover {
+  background: #4338ca;
+}
+
+.link {
+  text-align: center;
+  color: #888;
+  font-size: 14px;
+}
+
+.linkSpan {
+  color: #4f46e5;
+  font-weight: 600;
+  cursor: pointer;
+}
+@media (max-width: 768px) {
+  .card {
+    margin: 16px;
+    padding: 24px;
+  }
+}
