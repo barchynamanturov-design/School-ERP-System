@@ -8,6 +8,7 @@ export default function Students() {
   const { userData } = useUser();
   const navigate = useNavigate();
   const [students, setStudents] = useState([]);
+  const [selectedClass, setSelectedClass] = useState("");
   const [form, setForm] = useState({ name: "", classId: "" });
 
   const fetchStudents = async () => {
@@ -31,6 +32,15 @@ export default function Students() {
     await deleteStudent(id);
     fetchStudents();
   };
+
+  // Уникальные классы
+  const classes = [...new Set(students.map((s) => s.classId))]
+    .sort((a, b) => Number(a) - Number(b));
+
+  // Ученики выбранного класса
+  const filteredStudents = selectedClass
+    ? students.filter((s) => s.classId === selectedClass)
+    : [];
 
   return (
     <div className={styles.page}>
@@ -63,32 +73,67 @@ export default function Students() {
         </div>
       )}
 
-      <div className={styles.tableWrapper}>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>№</th>
-              <th>Имя</th>
-              <th>Класс</th>
-              {userData?.role === "admin" && <th>Удалить</th>}
-            </tr>
-          </thead>
-          <tbody>
-            {students.map((s, i) => (
-              <tr key={s.id}>
-                <td>{i + 1}</td>
-                <td>{s.name}</td>
-                <td><span className={styles.classBadge}>{s.classId} класс</span></td>
-                {userData?.role === "admin" && (
-                  <td>
-                    <button className={styles.deleteBtn} onClick={() => handleDelete(s.id)}>❌ Удалить</button>
-                  </td>
-                )}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* Выбор класса */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "20px" }}>
+        {classes.map((c) => (
+          <button
+            key={c}
+            onClick={() => setSelectedClass(selectedClass === c ? "" : c)}
+            style={{
+              padding: "8px 20px",
+              borderRadius: "20px",
+              border: "none",
+              cursor: "pointer",
+              background: selectedClass === c ? "#4f46e5" : "white",
+              color: selectedClass === c ? "white" : "#4f46e5",
+              fontWeight: "600",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+            }}
+          >
+            {c} класс
+          </button>
+        ))}
       </div>
+
+      {/* Список учеников */}
+      {selectedClass && (
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>№</th>
+                <th>Имя</th>
+                <th>Класс</th>
+                {userData?.role === "admin" && <th>Удалить</th>}
+              </tr>
+            </thead>
+            <tbody>
+              {filteredStudents.length === 0 ? (
+                <tr><td colSpan="4" style={{ textAlign: "center", padding: "20px", color: "#888" }}>Нет учеников</td></tr>
+              ) : (
+                filteredStudents.map((s, i) => (
+                  <tr key={s.id}>
+                    <td>{i + 1}</td>
+                    <td>{s.name}</td>
+                    <td><span className={styles.classBadge}>{s.classId} класс</span></td>
+                    {userData?.role === "admin" && (
+                      <td>
+                        <button className={styles.deleteBtn} onClick={() => handleDelete(s.id)}>❌ Удалить</button>
+                      </td>
+                    )}
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {!selectedClass && (
+        <p style={{ textAlign: "center", color: "#888", marginTop: "40px" }}>
+          👆 Выберите класс чтобы увидеть учеников
+        </p>
+      )}
     </div>
   );
 }

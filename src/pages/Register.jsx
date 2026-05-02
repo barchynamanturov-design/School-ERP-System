@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc, addDoc, collection } from "firebase/firestore";
+import { doc, setDoc, addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { auth } from "../firebase/auth";
 import { db } from "../firebase/firestore";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +22,28 @@ export default function Register() {
     classId: "",
     subject: "",
     adminCode: "",
+    childName: "",
+    childClassId: "",
   });
+  const [foundChild, setFoundChild] = useState(null);
+  const [searchDone, setSearchDone] = useState(false);
+
+  const handleSearchChild = async () => {
+    if (!data.childName || !data.childClassId) {
+      return alert("Введите имя ребёнка и выберите класс");
+    }
+    const q = query(
+      collection(db, "students"),
+      where("classId", "==", data.childClassId)
+    );
+    const snap = await getDocs(q);
+    const students = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    const found = students.find((s) =>
+      s.name.toLowerCase().includes(data.childName.toLowerCase())
+    );
+    setFoundChild(found || null);
+    setSearchDone(true);
+  };
 
   const handleRegister = async () => {
     if (!data.name || !data.email || !data.password) {
@@ -38,6 +59,10 @@ export default function Register() {
       if (!data.adminCode) return alert("Введите код администратора");
       if (!data.adminCode.endsWith("admin")) return alert("Неверный код администратора!");
     }
+    if (data.role === "parent" && !foundChild) {
+      return alert("Сначала найдите ребёнка");
+    }
+
     try {
       const result = await createUserWithEmailAndPassword(auth, data.email, data.password);
       const uid = result.user.uid;
@@ -46,8 +71,11 @@ export default function Register() {
         name: data.name,
         email: data.email,
         role: data.role,
-        classId: data.role === "student" ? data.classId : "",
+        classId: data.role === "student" ? data.classId :
+                 data.role === "parent" ? foundChild?.classId : "",
         subject: data.role === "teacher" ? data.subject : "",
+        childId: data.role === "parent" ? foundChild?.id : "",
+        childName: data.role === "parent" ? foundChild?.name : "",
         relatedIds: [],
         createdAt: new Date(),
       });
@@ -78,7 +106,7 @@ export default function Register() {
           <input className={styles.input} type="email" placeholder="Email" value={data.email} onChange={(e) => setData({ ...data, email: e.target.value })} />
           <input className={styles.input} type="password" placeholder="Пароль" value={data.password} onChange={(e) => setData({ ...data, password: e.target.value })} />
 
-          <select className={styles.select} value={data.role} onChange={(e) => setData({ ...data, role: e.target.value, classId: "", subject: "", adminCode: "" })}>
+          <select className={styles.select} value={data.role} onChange={(e) => setData({ ...data, role: e.target.value, classId: "", subject: "", adminCode: "", childName: "", childClassId: "" })}>
             <option value="student">Ученик</option>
             <option value="teacher">Учитель</option>
             <option value="parent">Родитель</option>
@@ -113,6 +141,47 @@ export default function Register() {
             />
           )}
 
+          {data.role === "parent" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <p style={{ fontSize: "14px", fontWeight: "600", color: "#1e1b4b" }}>🔍 Найдите ребёнка</p>
+              <input
+                className={styles.input}
+                type="text"
+                placeholder="Имя ребёнка"
+                value={data.childName}
+                onChange={(e) => setData({ ...data, childName: e.target.value })}
+              />
+              <select
+                className={styles.select}
+                value={data.childClassId}
+                onChange={(e) => setData({ ...data, childClassId: e.target.value })}
+              >
+                <option value="">Выберите класс ребёнка</option>
+                {Array.from({ length: 12 }, (_, i) => i + 1).map((num) => (
+                  <option key={num} value={`${num}`}>{num} класс</option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={handleSearchChild}
+                style={{ background: "#2563eb", color: "white", border: "none", padding: "10px", borderRadius: "8px", cursor: "pointer" }}
+              >
+                🔍 Найти ребёнка
+              </button>
+
+              {searchDone && foundChild && (
+                <div style={{ background: "#dcfce7", padding: "10px", borderRadius: "8px", color: "#16a34a", fontWeight: "600" }}>
+                  ✅ Найден: {foundChild.name} — {foundChild.classId} класс
+                </div>
+              )}
+              {searchDone && !foundChild && (
+                <div style={{ background: "#fee2e2", padding: "10px", borderRadius: "8px", color: "#dc2626" }}>
+                  ❌ Ученик не найден. Проверьте имя и класс.
+                </div>
+              )}
+            </div>
+          )}
+
           <button className={styles.button} onClick={handleRegister}>Зарегистрироваться</button>
           <p className={styles.link}>
             Уже есть аккаунт?{" "}
@@ -122,4 +191,4 @@ export default function Register() {
       </div>
     </div>
   );
-} 
+}
