@@ -28,10 +28,25 @@ export default function Register() {
   const [foundChild, setFoundChild] = useState(null);
   const [searchDone, setSearchDone] = useState(false);
 
-  const handleSearchChild = async () => {
-    if (!data.childName || !data.childClassId) {
-      return alert("Введите имя ребёнка и выберите класс");
-    }
+const handleSearchChild = async () => {
+  if (!data.childName) {
+    return alert("Введите имя ребёнка");
+  }
+  try {
+    const snap = await getDocs(collection(db, "students"));
+    const students = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    
+    const found = students.find((s) =>
+      s.name.toLowerCase().includes(data.childName.toLowerCase()) &&
+      (data.childClassId ? s.classId === data.childClassId : true)
+    );
+    
+    setFoundChild(found || null);
+    setSearchDone(true);
+  } catch (error) {
+    alert("Ошибка поиска: " + error.message);
+  }
+};
     const q = query(
       collection(db, "students"),
       where("classId", "==", data.childClassId)
