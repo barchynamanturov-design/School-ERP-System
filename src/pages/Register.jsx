@@ -206,4 +206,3 @@ const handleSearchChild = async () => {
       </div>
     </div>
   );
-}
